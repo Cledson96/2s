@@ -1,16 +1,68 @@
+"use client";
+
 import ECommerce from "@/components/Dashboard/E-commerce";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "TailAdmin | Next.js E-commerce Dashboard Template",
-  description: "This is Home Blog page for TailAdmin Next.js",
-  // other metadata
-};
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/common/Loader";
+import Sidebar from "@/components/Sidebar";
+import Header from "@/components/Header";
 
-export default function Home() {
+export default function Home({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { data: session, status } = useSession();
+
+  console.log(session);
+
+  useEffect(() => {
+    const verificarLogin = async () => {
+      if (status === "loading") {
+        return;
+      }
+
+      if (!session) {
+        router.push("/api/auth/signin");
+      }
+    };
+
+    const timeout = setTimeout(() => {
+      verificarLogin();
+    }, 1000);
+  }, [session, status, router]);
+
   return (
     <>
-      <div>oii</div>
+      <div className="dark:bg-boxdark-2 dark:text-bodydark">
+        {status === "loading" ? (
+          <Loader />
+        ) : (
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar
+              sidebarOpen={sidebarOpen}
+              setSidebarOpen={setSidebarOpen}
+            />
+
+            <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+              {/* <!-- ===== Header Start ===== --> */}
+              <Header
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+                user={session?.user}
+              />
+
+              <main>
+                <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                  {children}
+                </div>
+              </main>
+            </div>
+          </div>
+        )}
+      </div>
     </>
   );
 }

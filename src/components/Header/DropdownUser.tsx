@@ -2,7 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-const DropdownUser = () => {
+interface users {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null | undefined;
+}
+
+interface DropdownUserProps {
+  user: users | undefined;
+}
+
+export default function DropdownUser({ user }: DropdownUserProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
@@ -44,17 +54,17 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {user?.name}
           </span>
-          <span className="block text-xs">UX Designer</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
           <Image
             width={112}
             height={112}
-            src={"/images/user/user-01.png"}
+            src={user?.image || ""}
             alt="User"
+            className="rounded-full"
           />
         </span>
 
@@ -181,6 +191,4 @@ const DropdownUser = () => {
       {/* <!-- Dropdown End --> */}
     </div>
   );
-};
-
-export default DropdownUser;
+}

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import ReactLoading from "react-loading";
 import { MdOutlineSportsMotorsports } from "react-icons/md";
-import { FormEvent, useState, useRef, useEffect } from "react";
+import { FormEvent, useState, useRef, useEffect, ChangeEvent } from "react";
+import Home from "@/app/page";
 
 interface clientes {
   nome: string;
@@ -13,10 +14,25 @@ interface motoboys {
   nome: string;
   id: number;
 }
+interface pedido {
+  motoboy_id: number;
+  cliente_id: number;
+  expedido: number;
+  insucesso: number;
+  data: string;
+}
+
 export default function Cadastro() {
   const [loading, setLoading] = useState(false);
   const [motoboys, setMotoboys] = useState<motoboys[]>([]);
   const [clientes, setClientes] = useState<clientes[]>([]);
+  const [pedido, setPedido] = useState<pedido>({
+    motoboy_id: 0,
+    cliente_id: 0,
+    expedido: 0,
+    insucesso: 0,
+    data: new Date().toISOString().split("T")[0],
+  });
   const formRef = useRef(null);
 
   useEffect(() => {
@@ -40,8 +56,57 @@ export default function Cadastro() {
     fetchData();
   }, []);
 
+  async function entrada(e: FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (pedido.motoboy_id !== 0 && pedido.cliente_id !== 0) {
+        alert("Obrigatório selecionar o motoboy e o cliente.");
+        return;
+      }
+      const response = await fetch("/api/pedidos/entrada", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pedido),
+      });
+
+      if (response.status !== 200) {
+        setLoading(false);
+        throw new Error("Erro na requisição");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      alert("Erro ao cadastrar pedido");
+      console.error("Erro na requisição:", error);
+    }
+  }
+
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+
+    if (name === "data") {
+      setPedido((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    } else {
+      setPedido((prevState) => ({
+        ...prevState,
+        [name]: Number(value),
+      }));
+    }
+  };
+  console.log(pedido);
   return (
-    <>
+    <Home>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-title-md2 font-semibold text-black dark:text-white">
           Entrada de pedidos
@@ -57,69 +122,80 @@ export default function Cadastro() {
           </ol>
         </nav>
       </div>
-      <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-        <div className="flex flex-col gap-3 xl:flex-row">
-          <div className="p-6.5 w-full xl:w-1/2">
-            <label className="mb-3 block text-black dark:text-white">
-              Selecione o motoboy
-            </label>
-            <div className="relative z-20 bg-white dark:bg-form-input">
-              <span className="absolute top-1/2 left-4 z-30 -translate-y-1/2">
-                <MdOutlineSportsMotorsports size="1.4rem" color="black" />
-              </span>
-              <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input">
-                {motoboys.map((motoboy) => {
-                  return (
-                    <option key={motoboy.id} value={motoboy.id}>
-                      {motoboy.nome}
-                    </option>
-                  );
-                })}
-              </select>
-              <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <g opacity="0.8">
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
-                      fill="#637381"
-                    ></path>
-                  </g>
-                </svg>
-              </span>
-            </div>
-          </div>
-          <div className="p-6.5 w-full xl:w-1/2">
-            <label className="mb-3 block text-black dark:text-white">
-              Selecione a data do pedido
-            </label>
+      <div className="flex flex-col gap-1 xl:flex-row">
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-full xl:w-1/2">
+          <form onSubmit={entrada}>
+            <div className="flex flex-col gap-1 xl:flex-row">
+              <div className="p-6.5 w-full xl:w-1/2">
+                <label className="mb-3 block text-black dark:text-white">
+                  Selecione o motoboy
+                </label>
+                <div className="relative z-20 bg-white dark:bg-form-input">
+                  <span className="absolute top-1/2 left-4 z-30 -translate-y-1/2">
+                    <MdOutlineSportsMotorsports size="1.4rem" color="black" />
+                  </span>
+                  <select
+                    onChange={handleInputChange}
+                    value={pedido.motoboy_id}
+                    name="motoboy_id"
+                    className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-12 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input"
+                  >
+                    <option value={0}>Selecione o motoboy</option>
+                    {motoboys.map((motoboy) => {
+                      return (
+                        <option key={motoboy.id} value={Number(motoboy.id)}>
+                          {motoboy.nome}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <span className="absolute top-1/2 right-4 z-10 -translate-y-1/2">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g opacity="0.8">
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z"
+                          fill="#637381"
+                        ></path>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <div className="p-6.5 w-full xl:w-1/2">
+                <label className="mb-3 block text-black dark:text-white">
+                  Selecione a data do pedido
+                </label>
 
-            <input
-              type="date"
-              className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-            />
-          </div>
-        </div>
-
-        <form ref={formRef}>
-          <div className="p-6.5">
-            <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-              <div className="w-full xl:w-1/2">
+                <input
+                  type="date"
+                  onChange={handleInputChange}
+                  value={pedido.data}
+                  className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                />
+              </div>
+              <div className="p-6.5 w-full xl:w-1/3">
                 <label className="mb-2.5 block text-black dark:text-white">
                   Cliente
                 </label>
                 <div className="relative z-20 bg-white dark:bg-form-input">
-                  <select className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input">
+                  <select
+                    name="cliente_id"
+                    onChange={handleInputChange}
+                    value={pedido.cliente_id}
+                    className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-5 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input"
+                  >
+                    <option value={0}>Selecione o cliente</option>
                     {clientes.map((client) => {
                       return (
-                        <option key={client.id} value={client.id}>
+                        <option key={client.id} value={Number(client.id)}>
                           {client.nome}
                         </option>
                       );
@@ -145,49 +221,46 @@ export default function Cadastro() {
                   </span>
                 </div>
               </div>
-
-              <div className="w-full xl:w-1/2">
-                <label className="mb-2.5 block text-black dark:text-white">
-                  Email
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email do cliente"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
             </div>
-            <div className="mb-4.5 flex flex-col gap-6 xl:flex-row">
-              <div className="w-full xl:w-1/2">
-                <label className="mb-2.5 block text-black dark:text-white">
-                  Telefone
-                </label>
-                <input
-                  name="telefone"
-                  type="number"
-                  placeholder="Telefone"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
-
-              <div className="w-full xl:w-1/2">
-                <label className="mb-2.5 block text-black dark:text-white">
-                  Telefone alternativo
-                </label>
-                <input
-                  name="telefone2"
-                  type="number"
-                  placeholder="Telefone alternativo"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
-            </div>
-
+            {pedido.cliente_id !== 0 && pedido.motoboy_id !== 0 && (
+              <>
+                <div className="flex flex-col gap-1 xl:flex-row">
+                  <div className="p-6.5 ">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Pedidos expedidos
+                    </label>
+                    <input
+                      name="expedido"
+                      type="number"
+                      onChange={handleInputChange}
+                      value={pedido.expedido}
+                      placeholder="Quantidade"
+                      required
+                      className="w-full max-w-45 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
+                  </div>
+                  <div className="p-6.5 ">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Pedidos ausentes
+                    </label>
+                    <input
+                      name="insucesso"
+                      type="number"
+                      placeholder="Quantidade"
+                      onChange={handleInputChange}
+                      value={pedido.insucesso}
+                      required
+                      defaultValue={0}
+                      className="w-full max-w-45 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
             <button
               disabled={loading}
               type="submit"
-              className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray"
+              className="flex w-full max-w-45 items-center mx-auto mb-7 justify-center rounded bg-primary p-3 font-medium text-gray"
             >
               {loading ? (
                 <ReactLoading
@@ -197,12 +270,15 @@ export default function Cadastro() {
                   width={35}
                 />
               ) : (
-                "Cadastrar cliente"
+                "Cadastrar pedido"
               )}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-full xl:w-1/2">
+          <div>oii</div>
+        </div>
       </div>
-    </>
+    </Home>
   );
 }

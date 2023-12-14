@@ -6,6 +6,7 @@ import Image from "next/image";
 import { MdOutlineSportsMotorsports } from "react-icons/md";
 import { FaRegBuilding } from "react-icons/fa";
 import { MdOutlineShoppingBag } from "react-icons/md";
+import logo from "../../../public/img/logo.png";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -67,12 +68,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     >
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <Link href="/">
-          <Image
-            width={176}
-            height={32}
-            src={"/images/logo/logo.svg"}
-            alt="Logo"
-          />
+          <Image width={176} height={32} src={logo} alt="Logo" />
         </Link>
 
         <button
