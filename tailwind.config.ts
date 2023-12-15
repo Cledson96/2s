@@ -13,6 +13,7 @@ const config: Config = {
       satoshi: ["Satoshi", "sans-serif"],
     },
     colors: {
+      padrao: "#253053",
       current: "currentColor",
       transparent: "transparent",
       white: "#FFFFFF",

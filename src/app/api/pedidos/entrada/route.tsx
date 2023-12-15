@@ -17,8 +17,6 @@ export async function POST(request: Request) {
   try {
     const order: pedido = await request.json();
 
-    console.log(order);
-
     const { error } = schema.validate(order);
 
     if (error) {
@@ -32,6 +30,7 @@ export async function POST(request: Request) {
       where: {
         cliente_id: order.cliente_id,
         motoboy_id: order.motoboy_id,
+        data: new Date(order.data),
       },
     });
     if (existingOrder) {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
         data: {
           expedido: order.expedido,
           insucesso: order.insucesso,
-          data: order.data,
+          data: new Date(order.data),
           cliente_id: order.cliente_id,
         },
         where: {
@@ -56,7 +55,7 @@ export async function POST(request: Request) {
       data: {
         expedido: order.expedido,
         insucesso: order.insucesso,
-        data: order.data,
+        data: new Date(order.data),
         cliente_id: order.cliente_id,
         motoboy_id: order.motoboy_id,
       },

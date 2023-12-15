@@ -5,33 +5,22 @@ import ReactLoading from "react-loading";
 import { MdOutlineSportsMotorsports } from "react-icons/md";
 import { FormEvent, useState, useRef, useEffect, ChangeEvent } from "react";
 import Home from "@/app/page";
-
-interface clientes {
-  nome: string;
-  id: number;
-}
-interface motoboys {
-  nome: string;
-  id: number;
-}
-interface pedido {
-  motoboy_id: number;
-  cliente_id: number;
-  expedido: number;
-  insucesso: number;
-  data: string;
-}
+import moment from "moment";
+import { motoboys, clientes, pedidos, pedido } from "@/interface";
+import TableOrders from "@/components/Tables/TableOrders";
 
 export default function Cadastro() {
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [motoboys, setMotoboys] = useState<motoboys[]>([]);
   const [clientes, setClientes] = useState<clientes[]>([]);
+  const [pedidos, setPedidos] = useState<pedidos[]>();
   const [pedido, setPedido] = useState<pedido>({
     motoboy_id: 0,
     cliente_id: 0,
     expedido: 0,
     insucesso: 0,
-    data: new Date().toISOString().split("T")[0],
+    data: moment().format("YYYY-MM-DD"),
   });
   const formRef = useRef(null);
 
@@ -56,11 +45,36 @@ export default function Cadastro() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/pedidos/lista", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            motoboy_id: pedido.motoboy_id,
+            data: pedido.data,
+          }),
+        });
+
+        const data = await response.json();
+        setPedidos(data);
+      } catch (error) {
+        console.error("Erro na requisição:", error);
+      }
+    };
+
+    fetchData();
+  }, [pedido.data, pedido.motoboy_id, refresh]);
+
   async function entrada(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
-      if (pedido.motoboy_id !== 0 && pedido.cliente_id !== 0) {
+      if (pedido.motoboy_id === 0 || pedido.cliente_id === 0) {
+        setLoading(false);
         alert("Obrigatório selecionar o motoboy e o cliente.");
         return;
       }
@@ -72,13 +86,12 @@ export default function Cadastro() {
         body: JSON.stringify(pedido),
       });
 
-      if (response.status !== 200) {
+      if (response.status === 500 || response.status === 400) {
         setLoading(false);
         throw new Error("Erro na requisição");
       }
 
-      const result = await response.json();
-      console.log(result);
+      setRefresh(!refresh);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -104,7 +117,7 @@ export default function Cadastro() {
       }));
     }
   };
-  console.log(pedido);
+
   return (
     <Home>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -122,11 +135,24 @@ export default function Cadastro() {
           </ol>
         </nav>
       </div>
-      <div className="flex flex-col gap-1 xl:flex-row">
+      <div className="flex flex-col  xl:flex-row">
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-full xl:w-1/2">
           <form onSubmit={entrada}>
-            <div className="flex flex-col gap-1 xl:flex-row">
-              <div className="p-6.5 w-full xl:w-1/2">
+            <div className="p-6.5 pb-2 mx-auto w-full xl:w-1/2">
+              <label className="mb-3 block text-black dark:text-white">
+                Selecione a data do pedido
+              </label>
+
+              <input
+                type="date"
+                name="data"
+                onChange={handleInputChange}
+                defaultValue={pedido.data}
+                className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+              />
+            </div>
+            <div className="flex flex-col xl:flex-row">
+              <div className="p-6.5 pr-0 w-full xl:w-1/2">
                 <label className="mb-3 block text-black dark:text-white">
                   Selecione o motoboy
                 </label>
@@ -169,19 +195,8 @@ export default function Cadastro() {
                   </span>
                 </div>
               </div>
-              <div className="p-6.5 w-full xl:w-1/2">
-                <label className="mb-3 block text-black dark:text-white">
-                  Selecione a data do pedido
-                </label>
 
-                <input
-                  type="date"
-                  onChange={handleInputChange}
-                  value={pedido.data}
-                  className="custom-input-date custom-input-date-1 w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
-                />
-              </div>
-              <div className="p-6.5 w-full xl:w-1/3">
+              <div className="p-6.5 w-full xl:w-1/2">
                 <label className="mb-2.5 block text-black dark:text-white">
                   Cliente
                 </label>
@@ -250,33 +265,43 @@ export default function Cadastro() {
                       onChange={handleInputChange}
                       value={pedido.insucesso}
                       required
-                      defaultValue={0}
                       className="w-full max-w-45 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
                   </div>
                 </div>
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="flex w-full max-w-45 items-center mx-auto mb-7 justify-center rounded bg-primary p-3 font-medium text-gray"
+                >
+                  {loading ? (
+                    <ReactLoading
+                      type="bubbles"
+                      color="#fff"
+                      height={30}
+                      width={35}
+                    />
+                  ) : (
+                    "Cadastrar pedido"
+                  )}
+                </button>
               </>
             )}
-            <button
-              disabled={loading}
-              type="submit"
-              className="flex w-full max-w-45 items-center mx-auto mb-7 justify-center rounded bg-primary p-3 font-medium text-gray"
-            >
-              {loading ? (
-                <ReactLoading
-                  type="bubbles"
-                  color="#fff"
-                  height={30}
-                  width={35}
-                />
-              ) : (
-                "Cadastrar pedido"
-              )}
-            </button>
           </form>
         </div>
         <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark w-full xl:w-1/2">
-          <div>oii</div>
+          {pedido.motoboy_id !== 0 ? (
+            <TableOrders
+              pedidos={pedidos}
+              setPedido={setPedido}
+              refresh={refresh}
+              setRefresh={setRefresh}
+            />
+          ) : (
+            <h1 className="text-lg text-center my-10 font-extrabold text-black">
+              Selecione um motoboy
+            </h1>
+          )}
         </div>
       </div>
     </Home>
