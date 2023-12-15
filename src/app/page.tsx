@@ -1,15 +1,15 @@
 "use client";
 
-import ECommerce from "@/components/Dashboard/E-commerce";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/common/Loader";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-
-export default function Home({ children }: { children: React.ReactNode }) {
+interface HomeProps {
+  children: ReactNode | Element | any;
+}
+export default function Home({ children }: HomeProps) {
   const router = useRouter();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
