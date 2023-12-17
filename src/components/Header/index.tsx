@@ -1,31 +1,38 @@
 import Link from "next/link";
-import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownMessage from "./DropdownMessage";
 import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
-
+import logo from "@/img/logo/logo.png";
 interface users {
   name?: string | null | undefined;
   email?: string | null | undefined;
   image?: string | null | undefined;
 }
-
+interface dados {
+  ativo?: boolean | undefined;
+  permissao?: boolean | undefined;
+  user?: users;
+}
+interface sessions {
+  dados?: dados;
+  user?: users;
+}
 interface HeaderProps {
-  user: users | undefined;
+  session: sessions | null;
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }
 
 export default function Header({
-  user,
+  session,
   sidebarOpen,
   setSidebarOpen,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-end px-4 py-4 shadow-2 md:px-6 2xl:px-11">
-        <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
+        <div className="flex items-center gap-2 sm:gap-4 lg:hidden mr-auto ">
           <button
             aria-controls="sidebar"
             onClick={(e) => {
@@ -66,15 +73,12 @@ export default function Header({
               </span>
             </span>
           </button>
-          {/* <!-- Hamburger Toggle BTN --> */}
 
-          <Link className="block flex-shrink-0 lg:hidden" href="/">
-            <Image
-              width={32}
-              height={32}
-              src={"/images/logo/logo-icon.svg"}
-              alt="Logo"
-            />
+          <Link
+            className="block flex-shrink-0 lg:hidden bg-padrao p-2"
+            href="/"
+          >
+            <Image height={20} src={logo} alt="Logo" />
           </Link>
         </div>
 
@@ -85,9 +89,7 @@ export default function Header({
             <DropdownMessage />
           </ul>
 
-          {/* <!-- User Area --> */}
-          <DropdownUser user={user} />
-          {/* <!-- User Area --> */}
+          <DropdownUser user={session?.user} />
         </div>
       </div>
     </header>

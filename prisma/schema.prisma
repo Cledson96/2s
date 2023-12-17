@@ -11,33 +11,63 @@ datasource db {
 }
 
 model motoboys {
-  id              Int       @id @default(autoincrement()) 
-  nome            String    @db.VarChar(50)
-  email           String    @db.VarChar(150)
-  endereco        String?   @db.Text
-  cpf             String?   @db.Text
-  telefone        String?   @db.Text
-  pix             String?   @db.Text
-  pedidos pedidos[]
-} 
+  id         Int       @id @default(autoincrement())
+  nome       String    @db.VarChar(50)
+  email      String    @unique @db.VarChar(150)
+  endereco   String?   @db.Text
+  senha      String?   @db.Text
+  cpf        String?   @db.Text
+  telefone   String?   @db.Text
+  pix        String?   @db.Text
+  created_at DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  pedidos    pedidos[]
+}
 
 model clientes {
-  id              Int       @id @default(autoincrement()) 
-  nome            String    @db.VarChar(50)
-  email           String?    @db.VarChar(150)
-  telefone        String?   @db.Text
-  telefone2       String?   @db.Text
-  pedidos pedidos[]
-} 
+  id         Int       @id @default(autoincrement())
+  nome       String    @db.VarChar(50)
+  email      String?   @db.VarChar(150)
+  telefone   String?   @db.Text
+  telefone2  String?   @db.Text
+  created_at DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  pedidos    pedidos[]
+}
 
 model pedidos {
-  id             Int       @id @default(autoincrement())
-  cliente_id     Int
-  motoboy_id     Int
-  expedido       Int    
-  insucesso      Int
-  data         DateTime  
+  id         Int       @id @default(autoincrement())
+  cliente_id Int
+  motoboy_id Int
+  expedido   Int
+  insucesso  Int
+  data       DateTime
   entrada    DateTime  @default(now()) @db.Timestamp(0)
-  cliente      clientes?  @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  motoboy        motoboys?  @relation(fields: [motoboy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  created_at DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamp(0)
+  cliente    clientes? @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  motoboy    motoboys? @relation(fields: [motoboy_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model admin {
+  id            Int         @id @default(autoincrement())
+  nome          String      @db.VarChar(50)
+  email         String      @unique @db.VarChar(150)
+  senha         String?     @db.VarChar(150)
+  telefone      String?     @db.Text
+  foto          String?     @db.Text
+  pix           String?     @db.Text
+  ativo         Boolean     @db.Boolean
+  administrador Boolean     @db.Boolean
+  created_at    DateTime    @default(now()) @map("created_at") @db.Timestamp(0)
+  updated_at    DateTime    @default(now()) @updatedAt @db.Timestamp(0)
+  historico     historico[]
+}
+
+model historico {
+  id         Int      @id @default(autoincrement())
+  admin_id   Int
+  alteracao  String   @db.Text
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamp(0)
+  admin      admin?   @relation(fields: [admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

@@ -13,7 +13,7 @@ export default function Home({ children }: HomeProps) {
   const router = useRouter();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const { data: session, status } = useSession();
 
   console.log(session);
@@ -25,33 +25,33 @@ export default function Home({ children }: HomeProps) {
       }
 
       if (!session) {
-        router.push("/api/auth/signin");
+        router.push("/auth/login");
+      } else {
+        setLoading(false);
       }
     };
 
-    const timeout = setTimeout(() => {
-      verificarLogin();
-    }, 1000);
+    verificarLogin();
   }, [session, status, router]);
 
   return (
     <>
       <div className="dark:bg-boxdark-2 dark:text-bodydark">
-        {status === "loading" ? (
+        {loading ? (
           <Loader />
         ) : (
           <div className="flex h-screen overflow-hidden">
             <Sidebar
               sidebarOpen={sidebarOpen}
               setSidebarOpen={setSidebarOpen}
+              session={session}
             />
 
             <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-              {/* <!-- ===== Header Start ===== --> */}
               <Header
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}
-                user={session?.user}
+                session={session}
               />
 
               <main>

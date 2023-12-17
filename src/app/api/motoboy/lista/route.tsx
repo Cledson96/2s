@@ -9,6 +9,11 @@ export async function GET() {
       select: {
         id: true,
         nome: true,
+        email: true,
+        telefone: true,
+        cpf: true,
+        endereco: true,
+        pix: true,
       },
     });
 

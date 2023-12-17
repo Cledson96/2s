@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": " next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",
     "@supabase/supabase-js": "^2.39.0",
+    "@types/bcrypt": "^5.0.2",
     "antd": "^5.12.2",
+    "bcrypt": "^5.1.1",
     "joi": "^17.11.0",
     "moment": "^2.29.4",
     "next": "14.0.4",

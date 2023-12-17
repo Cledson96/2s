@@ -39,3 +39,14 @@ export interface pedidos {
   motoboy: motoboy;
   cliente: cliente;
 }
+
+export interface admin {
+  nome: string;
+  email: string;
+  senha: string;
+  telefone: string;
+  foto: string;
+  pix: string;
+  administrador: boolean | string;
+  ativo: boolean;
+}
