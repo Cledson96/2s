@@ -78,7 +78,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-padrao duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-padrao duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -109,7 +109,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
           </svg>
         </button>
       </div>
-      {/* <!-- SIDEBAR HEADER --> */}
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
@@ -204,18 +203,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
                           </li>
                           <li>
                             <Link
-                              href="/forms/form-layout"
+                              href="/pedidos/lista"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/forms/form-layout" &&
-                                "text-white"
+                                pathname === "/pedidos/lista" && "text-white"
                               }`}
                             >
-                              Form Layout
+                              Lista
                             </Link>
                           </li>
                         </ul>
                       </div>
-                      {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
                   );
                 }}
@@ -295,7 +292,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
                           </li>
                         </ul>
                       </div>
-                      {/* <!-- Dropdown Menu End --> */}
                     </React.Fragment>
                   );
                 }}
@@ -362,13 +358,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
                           </li>
                           <li>
                             <Link
-                              href="/forms/form-layout"
+                              href="/clientes/lista"
                               className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                pathname === "/forms/form-layout" &&
-                                "text-white"
+                                pathname === "/clientes/lista" && "text-white"
                               }`}
                             >
-                              Form Layout
+                              Lista
                             </Link>
                           </li>
                         </ul>

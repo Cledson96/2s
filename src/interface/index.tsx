@@ -3,9 +3,10 @@ export interface cliente {
   nome: string;
   email: string;
   telefone: string;
-  teledone2: string;
+  telefone2: string;
 }
 export interface motoboy {
+  id: number;
   cpf: string;
   nome: string;
   telefone: string;
@@ -49,4 +50,11 @@ export interface admin {
   pix: string;
   administrador: boolean | string;
   ativo: boolean;
+}
+interface pedidosTotal extends pedidos {
+  cliente: cliente;
+}
+
+export interface pedidosBoys extends motoboy {
+  pedidos: pedidosTotal[];
 }

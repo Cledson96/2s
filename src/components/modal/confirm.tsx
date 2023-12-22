@@ -1,8 +1,7 @@
 "use client";
 
 import { Modal } from "antd";
-import { useState } from "react";
-import { pedidos, pedido } from "@/interface";
+import { pedidos } from "@/interface";
 import moment from "moment";
 
 interface props {
