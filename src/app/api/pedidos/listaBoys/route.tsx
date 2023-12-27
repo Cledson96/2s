@@ -10,7 +10,6 @@ interface filtro {
 
 export async function POST(request: Request) {
   const filtro: filtro = await request.json();
-  console.log(filtro);
 
   try {
     const pedidos = await prisma.motoboys.findMany({

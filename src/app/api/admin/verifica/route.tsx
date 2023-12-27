@@ -9,14 +9,12 @@ interface filtro {
 
 export async function POST(request: Request) {
   const filtro: filtro = await request.json();
-  console.log(filtro);
   try {
     const validate = await prisma.admin.findUnique({
       where: {
         email: filtro.email,
       },
     });
-    console.log(validate);
     if (validate) {
       return NextResponse.json({ message: true }, { status: 200 });
     }

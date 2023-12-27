@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { signOut } from "next-auth/react";
 interface users {
-  name?: string | null | undefined;
+  nome?: string | null | undefined;
   email?: string | null | undefined;
-  image?: string | null | undefined;
+  foto?: string | null | undefined;
 }
 
 interface DropdownUserProps {
@@ -53,17 +52,16 @@ export default function DropdownUser({ user }: DropdownUserProps) {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            {user?.name}
+            {user?.nome}
           </span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
-          <Image
-            width={112}
-            height={112}
-            src={user?.image || ""}
+          <img
+            src={user?.foto || ""}
             alt="User"
             className="rounded-full"
+            style={{ width: "auto", height: "50px", maxWidth: "80px" }}
           />
         </span>
 

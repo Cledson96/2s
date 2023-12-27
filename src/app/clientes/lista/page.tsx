@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Home from "@/app/page";
+import Home from "@/app/home";
 import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
 import Tabela_clientes from "@/components/Tables/ListaClientes";

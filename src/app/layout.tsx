@@ -6,8 +6,8 @@ import { Metadata } from "next";
 import AuthProvider from "../components/authProviders/authProvider";
 
 export const metadata: Metadata = {
-  title: "TailAdmin | Next.js E-commerce Dashboard Template",
-  description: "This is Home Blog page for TailAdmin Next.js",
+  title: "2S Logística",
+  description: "Entregas rápidas",
   // other metadata
 };
 

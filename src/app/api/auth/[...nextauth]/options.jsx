@@ -90,11 +90,25 @@ export const options = {
       const user = await prisma.admin.findFirst({
         where: { email: session.user.email },
       });
-      if (user) {
+
+      let refresh = null;
+      if (user && !user.foto && session.user.image) {
+        refresh = await prisma.admin.update({
+          where: { id: user.id },
+          data: { foto: session.user.image },
+        });
+      }
+      if (refresh) {
+        session.dados = {
+          permissao: refresh.administrador,
+          ativo: refresh.ativo,
+          user: refresh,
+        };
+      } else if (user) {
         session.dados = {
           permissao: user.administrador,
           ativo: user.ativo,
-          user: session.user,
+          user: user,
         };
       }
 

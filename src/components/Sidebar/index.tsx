@@ -375,7 +375,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
               </SidebarLinkGroup>
             </ul>
           </div>
-
           {session?.dados?.permissao && (
             <div>
               <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
@@ -394,7 +393,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
                         <Link
                           href="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            (pathname === "/ui" || pathname.includes("ui")) &&
+                            (pathname === "/auth" ||
+                              pathname.includes("auth")) &&
                             "bg-graydark dark:bg-meta-4"
                           }`}
                           onClick={(e) => {
@@ -433,9 +433,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, session }: SidebarProps) => {
                           <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                             <li>
                               <Link
-                                href="/ui/alerts"
+                                href="/auth/lista"
                                 className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  pathname === "/ui/alerts" && "text-white"
+                                  pathname === "/auth/lista" && "text-white"
                                 }`}
                               >
                                 Lista de usuários

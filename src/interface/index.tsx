@@ -42,14 +42,15 @@ export interface pedidos {
 }
 
 export interface admin {
+  id?: number;
   nome: string;
   email: string;
-  senha: string;
+  senha?: string;
   telefone: string;
   foto: string;
   pix: string;
   administrador: boolean | string;
-  ativo: boolean;
+  ativo: boolean | string;
 }
 interface pedidosTotal extends pedidos {
   cliente: cliente;

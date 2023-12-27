@@ -1,11 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { admin } from "@/interface";
+
 import { schema } from "./schema";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+interface admin {
+  id: number;
+  nome: string;
+  email: string;
+  cpf: string;
+  telefone: string;
+  endereco: string;
+  pix: string;
+}
 function capitalizeFirstLetter(str: string): string {
   return str.replace(
     /\b\w+/g,
@@ -15,7 +23,7 @@ function capitalizeFirstLetter(str: string): string {
 
 export async function POST(request: Request) {
   try {
-    const user: admin = await request.json();
+    const user: any = await request.json();
     const { error } = schema.validate(user);
 
     if (error) {
@@ -24,41 +32,40 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-
-    const existingUser = await prisma.admin.findMany({
+    const administer = user.administrador === "Sim" ? true : false;
+    const ativo = user.ativo === "Sim" ? true : false;
+    const verifyEmail = await prisma.admin.findFirst({
       where: {
         email: user.email,
       },
     });
-    if (existingUser.length !== 0) {
+
+    if (verifyEmail && verifyEmail.id !== user.id) {
       return NextResponse.json(
         { error: "Bad Request", message: "Email já cadastrado" },
         { status: 409 }
       );
     }
 
-    const senhaCriptografada = await bcrypt.hash(user.senha, 10);
-
-    const test = await prisma.admin.create({
+    await prisma.admin.update({
+      where: {
+        id: user.id,
+      },
       data: {
         nome: capitalizeFirstLetter(user.nome),
-        email: user.email.toLowerCase(),
+        email: user.email,
         telefone: user.telefone,
-        senha: senhaCriptografada,
+        administrador: administer,
+        ativo: ativo,
         pix: user.pix,
-        administrador: user.administrador === "true" ? true : false,
-        ativo: true,
+        foto: user.foto,
       },
     });
 
-    if (test) {
-      return NextResponse.json(
-        { message: "Usuário cadastrado com sucesso" },
-        { status: 200 }
-      );
-    } else {
-      throw new Error("Erro ao cadastrar usuário");
-    }
+    return NextResponse.json(
+      { message: "Motoboy atualizado com sucesso" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { error: "Internal Server Error", message: error },

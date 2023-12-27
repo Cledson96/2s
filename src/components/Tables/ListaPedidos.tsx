@@ -18,8 +18,6 @@ export default function Tabela_pedidos({
 }: Props) {
   const [open, setOpen] = useState(false);
 
-  console.log("pedidos", pedidos);
-
   const columns: ColumnsType<pedidosBoys> = [
     {
       title: "Nome",
@@ -78,18 +76,15 @@ export default function Tabela_pedidos({
       clientes: cli,
     };
   });
-  console.log("data", data);
 
   const defaultExpandable = {
     expandedRowRender: (record: any) => {
-      console.log("Record:", record);
-
       return (
         <>
           <ul>
-            {record.clientes.map((ref: any, index: any) => {
+            {record.clientes.map((ref: any, index: number) => {
               return (
-                <li className="flex flex-row">
+                <li className="flex flex-row" key={index}>
                   <h1 className="mr-3">
                     Cliente:
                     <span className="font-bold">{ref.nome}</span>{" "}

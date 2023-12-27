@@ -2,7 +2,6 @@
 
 import { Modal } from "antd";
 import { motoboy } from "@/interface";
-import moment from "moment";
 import ReactLoading from "react-loading";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 
@@ -31,9 +30,6 @@ export default function EditBoy({
   }, [motoboy]);
 
   const refreshBoy = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
-    console.log(e.target.value);
-    console.log(e.target.name);
     setBoy({ ...boy, [e.target.name]: e.target.value });
   };
 

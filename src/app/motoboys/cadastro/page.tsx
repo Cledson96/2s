@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import ReactLoading from "react-loading";
-import Home from "@/app/page";
+import Home from "@/app/home";
 import { FormEvent, useState, useRef } from "react";
 
 interface motoboy {

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Home from "@/app/page";
+import Home from "@/app/home";
 import { useState, useEffect } from "react";
 import Loader from "@/components/common/Loader";
 import Tabela_pedidos from "@/components/Tables/ListaPedidos";
@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import locale from "antd/es/date-picker/locale/pt_BR";
 import "dayjs/locale/pt-br";
 import moment from "moment";
-import { DatePicker, Space } from "antd";
+import { DatePicker } from "antd";
 import { pedidosBoys } from "@/interface";
 
 const { RangePicker } = DatePicker;
@@ -17,11 +17,12 @@ const { RangePicker } = DatePicker;
 export default function Lista() {
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(true);
-  const [diaInicial, setDiaInicial] = useState(moment().format("DD/MM/YYYY"));
+  const [diaInicial, setDiaInicial] = useState(
+    moment().startOf("month").format("DD/MM/YYYY")
+  );
   const [diaFinal, setDiaFinal] = useState(moment().format("DD/MM/YYYY"));
   const [pedido, setPedido] = useState<pedidosBoys[]>([]);
   const dateFormat = "DD/MM/YYYY";
-  console.log(pedido);
 
   useEffect(() => {
     const parteInicial = diaInicial.split("/");

@@ -1,9 +1,11 @@
-import Link from "next/link";
-import DropdownMessage from "./DropdownMessage";
-import DropdownNotification from "./DropdownNotification";
+"use client";
+
+import { useState, useEffect } from "react";
 import DropdownUser from "./DropdownUser";
-import Image from "next/image";
-import logo from "@/img/logo/logo.png";
+import moment from "moment";
+import "moment/locale/pt-br";
+moment.locale("pt-br");
+
 interface users {
   name?: string | null | undefined;
   email?: string | null | undefined;
@@ -29,9 +31,19 @@ export default function Header({
   sidebarOpen,
   setSidebarOpen,
 }: HeaderProps) {
+  const [currentDate, setCurrentDate] = useState(
+    moment().format("DD [de] MMMM [de] YYYY - h:mm:ss a")
+  );
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentDate(moment().format("DD [de] MMMM [de] YYYY - h:mm:ss a"));
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
-      <div className="flex flex-grow items-center justify-end px-4 py-4 shadow-2 md:px-6 2xl:px-11">
+      <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
         <div className="flex items-center gap-2 sm:gap-4 lg:hidden mr-auto ">
           <button
             aria-controls="sidebar"
@@ -73,23 +85,10 @@ export default function Header({
               </span>
             </span>
           </button>
-
-          <Link
-            className="block flex-shrink-0 lg:hidden bg-padrao p-2"
-            href="/"
-          >
-            <Image height={20} src={logo} alt="Logo" />
-          </Link>
         </div>
-
+        <h1 className="flex hidden sm:flex">{currentDate}</h1>
         <div className="flex items-center gap-3 2xsm:gap-7">
-          <ul className="flex items-center gap-2 2xsm:gap-4">
-            <DropdownNotification />
-
-            <DropdownMessage />
-          </ul>
-
-          <DropdownUser user={session?.user} />
+          <DropdownUser user={session?.dados?.user} />
         </div>
       </div>
     </header>

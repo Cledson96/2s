@@ -4,7 +4,7 @@ import Link from "next/link";
 import ReactLoading from "react-loading";
 import { MdOutlineSportsMotorsports } from "react-icons/md";
 import { FormEvent, useState, useRef, useEffect, ChangeEvent } from "react";
-import Home from "@/app/page";
+import Home from "@/app/home";
 import moment from "moment";
 import { motoboys, clientes, pedidos, pedido } from "@/interface";
 import TableOrders from "@/components/Tables/TableOrders";
